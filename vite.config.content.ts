@@ -12,12 +12,13 @@ export default defineConfig({
     watch: isDev ? {} : undefined,
     outDir: r('extension/dist/contentScripts'),
     cssCodeSplit: false,
-    emptyOutDir: false,
+    emptyOutDir: true,
     sourcemap: isDev ? 'inline' : false,
+    minify:  false, // isDev ? false : 'terser',
     lib: {
       entry: r('src/contentScripts/index.ts'),
       name: packageJson.name,
-      formats: ['iife'],
+      // formats: [  isDev ? 'es':'cjs' ], // iife
     },
     rollupOptions: {
       output: {

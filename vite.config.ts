@@ -10,6 +10,7 @@ import windiConfig from './windi.config'
 import { isDev, port, r } from './scripts/utils'
 import { MV3Hmr } from './vite-mv3-hmr'
 
+
 export const sharedConfig: UserConfig = {
   root: r('src'),
   resolve: {
@@ -88,7 +89,7 @@ export default defineConfig(({ command }) => ({
     rollupOptions: {
       input: {
         options: r('src/options/index.html'),
-        popup: r('src/popup/index.html'),
+        popup: r('src/popup/index.html')
       },
     },
     minify: 'terser',

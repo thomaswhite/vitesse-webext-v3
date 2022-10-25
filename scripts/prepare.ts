@@ -8,7 +8,7 @@ import { isDev, log, r } from './utils'
  * Stub index.html to use Vite in development
  */
 async function stubIndexHtml() {
-  const views = ['options', 'popup', 'background']
+  const views = ['options', 'popup'] // , 'background'
 
   for (const view of views) {
     await fs.ensureDir(r(`extension/dist/${view}`))
@@ -24,12 +24,18 @@ async function stubIndexHtml() {
   }
 }
 
+function buldContent () {
+  execSync('npx vite build  --config vite.config.content.ts', { stdio: 'inherit' })
+  log('PRE', 'write content script' )
+}
+
 function writeManifest() {
   execSync('npx esno ./scripts/manifest.ts', { stdio: 'inherit' })
 }
 
 fs.ensureDirSync(r('extension'))
 fs.copySync(r('assets'), r('extension/assets'))
+buldContent ()
 writeManifest()
 
 if (isDev) {
