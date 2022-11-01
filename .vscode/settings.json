@@ -7,5 +7,8 @@
   },
   "files.associations": {
     "*.css": "postcss"
-  }
+  },
+  "search.useGlobalIgnoreFiles": true,
+  "search.useIgnoreFiles": true,
+  "search.useParentIgnoreFiles": false
 }

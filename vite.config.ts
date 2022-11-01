@@ -1,5 +1,9 @@
 import { dirname, relative } from 'path'
 import { UserConfig, defineConfig } from 'vite'
+
+import replace from '@rollup/plugin-replace'
+import alias from '@rollup/plugin-alias';
+
 import Vue from '@vitejs/plugin-vue'
 import Icons from 'unplugin-icons/vite'
 import IconsResolver from 'unplugin-icons/resolver'
@@ -62,6 +66,18 @@ export const sharedConfig: UserConfig = {
         )
       },
     },
+
+    // https://github.com/vuejs/rollup-plugin-vue/issues/112#issuecomment-580415846
+    replace({ 
+      'process.env.NODE_ENV': JSON.stringify(isDev ? 'dev' : 'production'),
+       preventAssignment: false,
+      // __buildDate__: () => JSON.stringify(new Date()),
+      // __buildVersion: 15 
+    }),  
+
+
+
+    
   ],
   optimizeDeps: {
     include: ['vue', '@vueuse/core', 'webextension-polyfill'],
@@ -102,6 +118,17 @@ export default defineConfig(({ command }) => ({
       config: windiConfig,
     }),
     MV3Hmr(),
+
+    {
+      name: "configure-response-headers",
+      configureServer: (server) => {
+        server.middlewares.use((_req, res, next) => {
+          res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
+          res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
+          next();
+        });
+      },
+    },
   ],
   test: {
     globals: true,

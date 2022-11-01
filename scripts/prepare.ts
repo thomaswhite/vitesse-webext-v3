@@ -2,7 +2,7 @@
 import { execSync } from 'child_process'
 import fs from 'fs-extra'
 import chokidar from 'chokidar'
-import { isDev, log, r } from './utils'
+import { isDev, log, port, r } from './utils'
 
 /**
  * Stub index.html to use Vite in development
@@ -14,7 +14,8 @@ async function stubIndexHtml() {
     await fs.ensureDir(r(`extension/dist/${view}`))
     let data = await fs.readFile(r(`src/${view}/index.html`), 'utf-8')
     data = data
-      .replace('"./main.ts"', `"/${view}/main.ts"`)
+      .replace('"./main.ts"', `"http://localhost:${port}/${view}/main.ts"`)
+      // .replace('"./main.ts"', `"/${view}/main.ts.js"`)
       .replace(
         '<div id="app"></div>',
         '<div id="app">Vite server did not start</div>'
@@ -24,7 +25,7 @@ async function stubIndexHtml() {
   }
 }
 
-function buldContent () {
+function buildContent () {
   execSync('npx vite build  --config vite.config.content.ts', { stdio: 'inherit' })
   log('PRE', 'write content script' )
 }
@@ -35,7 +36,8 @@ function writeManifest() {
 
 fs.ensureDirSync(r('extension'))
 fs.copySync(r('assets'), r('extension/assets'))
-buldContent ()
+
+buildContent()
 writeManifest()
 
 if (isDev) {
@@ -46,4 +48,9 @@ if (isDev) {
   chokidar.watch([r('src/manifest.ts'), r('package.json')]).on('change', () => {
     writeManifest()
   })
+  chokidar.watch([r('vite*.*')]).on('change', () => {
+    buildContent()
+    writeManifest()
+  })
+
 }

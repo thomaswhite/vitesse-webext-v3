@@ -23,7 +23,7 @@ export async function getManifest() {
       "activeTab",
       "history",
       "identity",
-      "alarms"
+      "alarms",
     ],
    
     action: {
@@ -33,12 +33,12 @@ export async function getManifest() {
     },
 
     options_ui: {
-      page: './dist/options/index.html',
+      page: 'dist/options/index.html',
       open_in_tab: true,
     },
  
     background: {
-      service_worker: './dist/background/index.mjs',
+      service_worker: 'dist/background/background.js',
     },
 
     icons: {
@@ -50,29 +50,35 @@ export async function getManifest() {
     content_scripts: [
       {
         "matches": ["<all_urls>"],
-        js: ['./dist/contentScripts/index.global.js'],
+        js: ['dist/contentScripts/index.global.js'],
         run_at: "document_idle",
         all_frames: false
       },
     ],
 
     content_security_policy : {
-      extension_pages: "script-src 'self'; object-src 'self'; worker-src 'self'",
-      sandbox: "sandbox allow-scripts; script-src 'self'"
+      extension_pages: "script-src 'self'; object-src 'self'; ",
     },
     
+    web_accessible_resources: [
+      {
+        "resources": ["*"],
+        "matches": ["<all_urls>"]
+      }
+    ]
+     
   }
 
-  if (isDev) {
+  if (0 && isDev) {
     // for content script, as browsers will cache them for each reload,
     // we use a background script to always inject the latest version
     // see src/background/contentScriptHMR.ts
     // delete manifest.content_scripts
-    manifest.permissions?.push('webNavigation')
+    manifest.permissions?.push('webNavigation') 
 
     // this is required on dev for Vite script to load
-    manifest.content_security_policy.extension_pages = 
-      `script-src \'self\' http://localhost:${port}; object-src \'self\'; worker-src \'self\'`;    
+   manifest.content_security_policy.extension_pages = `script-src \'self\' http://localhost:${port};  object-src 'self'; `
+    // manifest.content_security_policy.extension_pages = `script-src \'self\' http://localhost:${port}; object-src \'self\'; worker-src \'self\'`;    
   }
 
   return manifest
